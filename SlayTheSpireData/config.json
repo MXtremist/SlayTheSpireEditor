@@ -1,0 +1,10 @@
+{
+  "jobs": [
+    "IRONCLAD",
+    "THE_SILENT",
+    "DEFECT",
+    "WATCHER"
+  ],
+  "cards": "SlayTheSpireData\\db_cards.csv",
+  "relics": "SlayTheSpireData\\db_relics.csv"
+}
