@@ -45,21 +45,20 @@ class autosave(object):
         self.save_json = self.decode_from_autosave(read_file(filename))
         self.job_name = job
 
-    def decode_from_autosave(self, data):
+    def decode_from_autosave(self, data, key="key"):
         result = ""
-        key = "key"
         data = b64decode(data)
-        for index, i in enumerate(data):
-            result += chr(i ^ ord(key[index % len(key)]))
-        json_result = json.loads(result)
-        return json_result
+        for index, data_i in enumerate(data):
+            result += chr(data_i ^ ord(key[index % len(key)]))
 
-    def encode_to_autosave(self, data):
-        data = json.dumps(data)
+        result = json.loads(result)
+        return result
+
+    def encode_to_autosave(self, data, key="key"):
         result = ""
-        key = "key"
-        for index, i in enumerate(data.encode()):
-            result += chr(i ^ ord(key[index % len(key)]))
+        data = json.dumps(data).encode()
+        for index, data_i in enumerate(data):
+            result += chr(data_i ^ ord(key[index % len(key)]))
 
         result = b64encode(result.encode()).decode()
         return result
