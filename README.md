@@ -19,3 +19,5 @@
 ## 致谢
 
 [杀戮尖塔/尖塔奇兵（Slay the Spire）中文维基|攻略百科|考据资料|Steam - 灰机wiki (huijiwiki.com)](https://sts.huijiwiki.com/wiki/首页)
+
+[写一个杀戮尖塔存档修改器 - 『编程语言区』 - 吾爱破解 - LCG - LSG |安卓破解|病毒分析|www.52pojie.cn](https://www.52pojie.cn/thread-1541057-1-1.html)（功能太复杂，就改了个自己的）
