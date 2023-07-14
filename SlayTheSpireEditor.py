@@ -39,7 +39,7 @@ def edit_save():
         case _:
             return
     # choose func
-    options = ["展示存档状态", "解码存档到json", "添加卡牌", "升级卡牌", "删除卡牌", "修改金币", "保存修改"]
+    options = ["展示存档状态", "解码存档到json", "添加卡牌", "升级卡牌", "删除卡牌", "添加遗物", "删除遗物", "修改金币", "保存修改"]
     while True:
         choice = input(input_options(options))
         match choice:
@@ -58,8 +58,12 @@ def edit_save():
                 card_id, upgrades = card_to_id()
                 utils.remove_card(card_id, upgrades)
             case "6":
-                update_gold()
+                utils.add_relic(relic_to_id())
             case "7":
+                utils.remove_relic(relic_to_id())
+            case "8":
+                update_gold()
+            case "9":
                 utils.save_save()
             case _:
                 break
@@ -79,6 +83,10 @@ def card_to_id():
         upgrades = int(upgrades_str)
     return utils.get_card_id(card), upgrades
 
+def relic_to_id():
+    clear()
+    relic = input("========================\n请输入遗物中文名称:")
+    return utils.get_relic_id(relic)
 
 def update_gold():
     clear()

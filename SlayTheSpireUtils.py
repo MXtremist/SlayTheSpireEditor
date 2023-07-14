@@ -2,6 +2,7 @@ from base64 import b64decode, b64encode
 import json
 import os
 import pandas as pd
+from prettytable import PrettyTable
 
 
 # DEBUG = True
@@ -45,6 +46,8 @@ class autosave(object):
         self.save_json = self.decode_from_autosave(read_file(filename))
         self.job_name = job
 
+    '''Decoding & Encoding'''
+
     def decode_from_autosave(self, data, key="key"):
         result = ""
         data = b64decode(data)
@@ -69,12 +72,14 @@ class autosave(object):
         with open(self.job_name + ".json", "w") as wr_json_f:
             wr_json_f.write(json.dumps(self.save_json))
 
+    '''Card'''
+
     def add_card_to_json(self, id, upgrades):
         self.save_state = False
         self.save_json["cards"].append({"upgrades": upgrades, "misc": 0, "id": id})
         return
 
-    def find_by_id_and_upgrades(self, id, upgrades):
+    def find_card_by_id_and_upgrades(self, id, upgrades):
         for i, card in enumerate(self.save_json["cards"]):
             if card["id"] == id and card["upgrades"] == upgrades:
                 return i
@@ -82,22 +87,46 @@ class autosave(object):
         exit()
 
     def upgrades_card_to_json(self, id, upgrades):
-        index = self.find_by_id_and_upgrades(id, upgrades)
+        index = self.find_card_by_id_and_upgrades(id, upgrades)
         self.save_state = False
         self.save_json["cards"][index]["upgrades"] += 1
         return
 
     def remove_card_to_json(self, id, upgrades):
-        index = self.find_by_id_and_upgrades(id, upgrades)
+        index = self.find_card_by_id_and_upgrades(id, upgrades)
         self.save_state = False
         del self.save_json["cards"][index]
         return
+
+    '''Relic'''
+
+    def add_relic_to_json(self, id):
+        self.save_state = False
+        self.save_json["relics"].append(id)
+        return
+
+    def find_relic_by_id(self, id):
+        for i, relic in enumerate(self.save_json["relics"]):
+            if relic == id:
+                return i
+        print(f'找不到遗物"id={id}"')
+        exit()
+
+    def remove_relic_to_json(self, id):
+        index = self.find_relic_by_id(id)
+        self.save_state = False
+        del self.save_json["relics"][index]
+        return
+
+    '''Gold'''
 
     def update_gold_to_json(self, gold):
         self.save_state = False
         old = self.save_json["gold"]
         self.save_json["gold"] = gold
         return old
+
+    '''Save'''
 
     def save_to_autosave(self):
         self.save_state = True
@@ -122,17 +151,21 @@ class autosave(object):
         cards	当前卡牌，upgrades表示是否升级\n
         hand_size	手牌数量（最大不能大于10如果大于10，还是会按照10来算）\n
         red	能量点\n"""
-        print(f'---------\n目前血量: {self.save_json["current_health"]}')
-        print(f'最大血量: {self.save_json["max_health"]}')
-        print(f'金币: {self.save_json["gold"]}')
-        print(f'手牌数量: {self.save_json["hand_size"]}')
-        print(f'能量点: {self.save_json["red"]}')
-        print(f"---------\n遗物")
-        for relic in self.save_json["relics"]:
-            print(relic)
-        print(f"---------\n当前卡牌")
+        print(f'{"[目前血量]":<10}\t{self.save_json["current_health"]:<5}')
+        print(f'{"[最大血量]":<10}\t{self.save_json["max_health"]:<5}')
+        print(f'{"[金币]":<10}\t{self.save_json["gold"]:<5}')
+        print(f'{"[手牌数量]":<10}\t{self.save_json["hand_size"]:<5}')
+        print(f'{"[能量点]":<10}\t{self.save_json["red"]:<5}')
+        print(f"[遗物]")
+        relic_table = PrettyTable(["name", "id"])
+        for relic_id in self.save_json["relics"]:
+            relic_table.add_row([get_relic_str(relic_id), relic_id])
+        print(relic_table)
+        print(f"[当前卡牌]")
+        card_table = PrettyTable(["name", "id", "upgrades"])
         for card in self.save_json["cards"]:
-            print(f'id:{card["id"]} upgrades:{card["upgrades"]}')
+            card_table.add_row([get_card_str(card["id"]), card["id"], card["upgrades"]])
+        print(card_table)
         return
 
 
@@ -157,12 +190,47 @@ def get_card_id(card_str):
     card_find = db.db_cards[db.db_cards["name"] == card_str]["card_id"].to_list()
     if len(card_find) == 0:
         print(f'卡牌"{card_str}"不存在')
-        exit()
-    if len(card_find) > 1:
+    elif len(card_find) > 1:
         print(f'卡牌"{card_str}"找到{len(card_find)}个结果')
-        print(card_find)
-        exit()
-    return card_find[0]
+    else:
+        return card_find[0]
+    exit()
+
+
+def get_card_str(card_id):
+    global db
+    card_find = db.db_cards[db.db_cards["card_id"] == card_id]["name"].to_list()
+    if len(card_find) == 0:
+        print(f'卡牌"{card_id}"不存在')
+    elif len(card_find) > 1:
+        print(f'卡牌"{card_id}"找到{len(card_find)}个结果')
+    else:
+        return card_find[0]
+    exit()
+
+
+def get_relic_id(relic_str):
+    global db
+    relic_find = db.db_relics[db.db_relics["name_zhs"] == relic_str]["name_en"].to_list()
+    if len(relic_find) == 0:
+        print(f'遗物"{relic_str}"不存在')
+    elif len(relic_find) > 1:
+        print(f'遗物"{relic_str}"找到{len(relic_find)}个结果')
+    else:
+        return relic_find[0]
+    exit()
+
+
+def get_relic_str(relic_id):
+    global db
+    relic_find = db.db_relics[db.db_relics["name_en"] == relic_id]["name_zhs"].to_list()
+    if len(relic_find) == 0:
+        print(f'遗物"{relic_id}"不存在')
+    elif len(relic_find) > 1:
+        print(f'遗物"{relic_id}"找到{len(relic_find)}个结果')
+    else:
+        return relic_find[0]
+    exit()
 
 
 """SAVE FUNCTIONS"""
@@ -193,7 +261,7 @@ def write_json():
 def add_card(card_id, upgrades):
     global save
     save.add_card_to_json(card_id, upgrades)
-    print(f'添加"id={card_id}, upgrades={upgrades}"成功')
+    print(f'添加卡牌"id={card_id}, upgrades={upgrades}"成功')
     return
 
 
@@ -208,6 +276,20 @@ def remove_card(card_id, upgrades):
     global save
     save.remove_card_to_json(card_id, upgrades)
     print(f'删除卡牌"id={card_id}, upgrades={upgrades}"成功')
+    return
+
+
+def add_relic(relic_id):
+    global save
+    save.add_relic_to_json(relic_id)
+    print(f'添加遗物"id={relic_id},"成功')
+    return
+
+
+def remove_relic(relic_id):
+    global save
+    save.remove_relic_to_json(relic_id)
+    print(f'删除遗物"id={relic_id},"成功')
     return
 
 
