@@ -31,6 +31,52 @@ class database(object):
     def get_job_from_num(self, num: int) -> str:
         return self.db_json["jobs"][num]
 
+    def show_db_cards(self):
+        print(self.db_cards)
+
+    def show_db_relics(self):
+        print(self.db_relics)
+
+    def get_card_id(self, card_str):
+        card_find = self.db_cards[self.db_cards["name"] == card_str]["card_id"].to_list()
+        if len(card_find) == 0:
+            print(f'卡牌"{card_str}"不存在')
+        elif len(card_find) > 1:
+            print(f'卡牌"{card_str}"找到{len(card_find)}个结果')
+        else:
+            return card_find[0]
+        exit()
+
+    def get_card_str(self, card_id):
+        card_find = self.db_cards[self.db_cards["card_id"] == card_id]["name"].to_list()
+        if len(card_find) == 0:
+            print(f'卡牌"{card_id}"不存在')
+        elif len(card_find) > 1:
+            print(f'卡牌"{card_id}"找到{len(card_find)}个结果')
+        else:
+            return card_find[0]
+        exit()
+
+    def get_relic_id(self, relic_str):
+        relic_find = self.db_relics[self.db_relics["name_zhs"] == relic_str]["name_en"].to_list()
+        if len(relic_find) == 0:
+            print(f'遗物"{relic_str}"不存在')
+        elif len(relic_find) > 1:
+            print(f'遗物"{relic_str}"找到{len(relic_find)}个结果')
+        else:
+            return relic_find[0]
+        exit()
+
+    def get_relic_str(self, relic_id):
+        relic_find = self.db_relics[self.db_relics["name_en"] == relic_id]["name_zhs"].to_list()
+        if len(relic_find) == 0:
+            print(f'遗物"{relic_id}"不存在')
+        elif len(relic_find) > 1:
+            print(f'遗物"{relic_id}"找到{len(relic_find)}个结果')
+        else:
+            return relic_find[0]
+        exit()
+
 
 class autosave(object):
     def __init__(self, job=""):
@@ -40,13 +86,7 @@ class autosave(object):
         else:
             self.init_job(job)
 
-    def init_job(self, job: str):
-        self.init_state = True
-        filename = SAVESDIR + "/" + job + ".autosave"
-        self.save_json = self.decode_from_autosave(read_file(filename))
-        self.job_name = job
-
-    '''Decoding & Encoding'''
+    '''Save'''
 
     def decode_from_autosave(self, data, key="key"):
         result = ""
@@ -57,7 +97,7 @@ class autosave(object):
         result = json.loads(result)
         return result
 
-    def encode_to_autosave(self, data, key="key"):
+    def encode_to_autosave(self, data, key="key") -> str:
         result = ""
         data = json.dumps(data).encode()
         for index, data_i in enumerate(data):
@@ -66,83 +106,40 @@ class autosave(object):
         result = b64encode(result.encode()).decode()
         return result
 
-    def write_to_json_file(self):
+    def init_autosave(self, job: str):
+        self.init_state = True
+        filename = SAVESDIR + "/" + job + ".autosave"
+        self.save_json = self.decode_from_autosave(read_file(filename))
+        self.job_name = job
+        print(f"加载存档成功")
+        return
+
+    def write_autosave(self):
         if not self.init_state:
             return
-        with open(self.job_name + ".json", "w") as wr_json_f:
+        filename = self.job_name + ".json"
+        with open(filename, "w") as wr_json_f:
             wr_json_f.write(json.dumps(self.save_json))
-
-    '''Card'''
-
-    def add_card_to_json(self, id, upgrades):
-        self.save_state = False
-        self.save_json["cards"].append({"upgrades": upgrades, "misc": 0, "id": id})
+        print(f"存档已写入文件{filename}")
         return
 
-    def find_card_by_id_and_upgrades(self, id, upgrades):
-        for i, card in enumerate(self.save_json["cards"]):
-            if card["id"] == id and card["upgrades"] == upgrades:
-                return i
-        print(f'找不到卡牌"id={id}, upgrades={upgrades}"')
-        exit()
-
-    def upgrades_card_to_json(self, id, upgrades):
-        index = self.find_card_by_id_and_upgrades(id, upgrades)
-        self.save_state = False
-        self.save_json["cards"][index]["upgrades"] += 1
-        return
-
-    def remove_card_to_json(self, id, upgrades):
-        index = self.find_card_by_id_and_upgrades(id, upgrades)
-        self.save_state = False
-        del self.save_json["cards"][index]
-        return
-
-    '''Relic'''
-
-    def add_relic_to_json(self, id):
-        self.save_state = False
-        self.save_json["relics"].append(id)
-        return
-
-    def find_relic_by_id(self, id):
-        for i, relic in enumerate(self.save_json["relics"]):
-            if relic == id:
-                return i
-        print(f'找不到遗物"id={id}"')
-        exit()
-
-    def remove_relic_to_json(self, id):
-        index = self.find_relic_by_id(id)
-        self.save_state = False
-        del self.save_json["relics"][index]
-        return
-
-    '''Gold'''
-
-    def update_gold_to_json(self, gold):
-        self.save_state = False
-        old = self.save_json["gold"]
-        self.save_json["gold"] = gold
-        return old
-
-    '''Save'''
-
-    def save_to_autosave(self):
-        self.save_state = True
+    def save_autosave(self):
         autosave = self.encode_to_autosave(self.save_json)
-
         filename = SAVESDIR + "/" + self.job_name + ".autosave"
         filename_back = filename + ".back"
+
         if os.path.exists(filename_back):
             os.remove(filename_back)
         os.rename(filename, filename_back)
 
         with open(filename, "w") as wr_autosave_f:
             wr_autosave_f.write(autosave)
+
+        self.save_state = True
+        print(f'保存存档成功，旧存档备份为".back"后缀')
         return
 
-    def show(self):
+    def show_autosave(self):
         """
         current_health	目前血量\n
         max_health	最大血量\n
@@ -151,160 +148,101 @@ class autosave(object):
         cards	当前卡牌，upgrades表示是否升级\n
         hand_size	手牌数量（最大不能大于10如果大于10，还是会按照10来算）\n
         red	能量点\n"""
+
+        global db
+
         print(f'{"[目前血量]":<10}\t{self.save_json["current_health"]:<5}')
         print(f'{"[最大血量]":<10}\t{self.save_json["max_health"]:<5}')
         print(f'{"[金币]":<10}\t{self.save_json["gold"]:<5}')
         print(f'{"[手牌数量]":<10}\t{self.save_json["hand_size"]:<5}')
         print(f'{"[能量点]":<10}\t{self.save_json["red"]:<5}')
+
         print(f"[遗物]")
         relic_table = PrettyTable(["name", "id"])
         for relic_id in self.save_json["relics"]:
-            relic_table.add_row([get_relic_str(relic_id), relic_id])
+            relic_table.add_row([db.get_relic_str(relic_id), relic_id])
         print(relic_table)
+
         print(f"[当前卡牌]")
         card_table = PrettyTable(["name", "id", "upgrades"])
         for card in self.save_json["cards"]:
-            card_table.add_row([get_card_str(card["id"]), card["id"], card["upgrades"]])
+            card_table.add_row([db.get_card_str(card["id"]), card["id"], card["upgrades"]])
         print(card_table)
+
+        return
+
+    '''Card'''
+
+    def find_card(self, card_id, upgrades) -> int:
+        for i, card in enumerate(self.save_json["cards"]):
+            if card["id"] == card_id and card["upgrades"] == upgrades:
+                return i
+        return -1
+
+    def add_card(self, card_str, card_id, upgrades):
+        self.save_json["cards"].append({"upgrades": upgrades, "misc": 0, "id": card_id})
+        self.save_state = False
+        print(f'添加卡牌"name={card_str}, id={card_id}, upgrades={upgrades}"成功')
+        return
+
+    def upgrades_card(self, card_str, card_id, upgrades):
+        index = self.find_card(card_id, upgrades)
+        if index == -1:
+            print(f'找不到卡牌"name={card_str}, id={card_id}, upgrades={upgrades}"')
+        else:
+            self.save_json["cards"][index]["upgrades"] += 1
+            self.save_state = False
+            print(f'升级卡牌"name={card_str}, id={card_id}, upgrades={upgrades}"成功')
+        return
+
+    def remove_card(self, card_str, card_id, upgrades):
+        index = self.find_card(card_id, upgrades)
+        if index == -1:
+            print(f'找不到卡牌"name={card_str}, id={card_id}, upgrades={upgrades}"')
+        else:
+            del self.save_json["cards"][index]
+            self.save_state = False
+            print(f'删除卡牌"name={card_str}, id={card_id}, upgrades={upgrades}"成功')
+        return
+
+    '''Relic'''
+
+    def find_relic(self, relic_id) -> int:
+        for i, relic in enumerate(self.save_json["relics"]):
+            if relic == relic_id:
+                return i
+        return -1
+
+    def add_relic(self, relic_str, relic_id):
+        self.save_json["relics"].append(relic_id)
+        if relic_str == "添水":
+            self.save_json["red"] += 1
+        self.save_state = False
+        print(f'添加遗物"name={relic_str}, id={relic_id}"成功')
+        return
+
+    def remove_relic(self, relic_str, relic_id):
+        index = self.find_relic(relic_id)
+        if index == -1:
+            print(f'找不到遗物"name={relic_str}, id={relic_id}"')
+        else:
+            del self.save_json["relics"][index]
+            self.save_state = False
+            print(f'删除遗物"name={relic_str}, id={relic_id}"成功')
+        return
+
+    '''Gold'''
+
+    def update_gold(self, gold):
+        old = self.save_json["gold"]
+        self.save_json["gold"] = gold
+        self.save_state = False
+        print(f"将金币从{old}更改为{gold}成功")
         return
 
 
 db = database()  # database class save the json from DATABASE
 save = autosave()  # autosave class save the job name
-
-"""DATABASE FUNCTIONS"""
-
-
-def show_db_cards():
-    global db
-    print(db.db_cards)
-
-
-def show_db_relics():
-    global db
-    print(db.db_relics)
-
-
-def get_card_id(card_str):
-    global db
-    card_find = db.db_cards[db.db_cards["name"] == card_str]["card_id"].to_list()
-    if len(card_find) == 0:
-        print(f'卡牌"{card_str}"不存在')
-    elif len(card_find) > 1:
-        print(f'卡牌"{card_str}"找到{len(card_find)}个结果')
-    else:
-        return card_find[0]
-    exit()
-
-
-def get_card_str(card_id):
-    global db
-    card_find = db.db_cards[db.db_cards["card_id"] == card_id]["name"].to_list()
-    if len(card_find) == 0:
-        print(f'卡牌"{card_id}"不存在')
-    elif len(card_find) > 1:
-        print(f'卡牌"{card_id}"找到{len(card_find)}个结果')
-    else:
-        return card_find[0]
-    exit()
-
-
-def get_relic_id(relic_str):
-    global db
-    relic_find = db.db_relics[db.db_relics["name_zhs"] == relic_str]["name_en"].to_list()
-    if len(relic_find) == 0:
-        print(f'遗物"{relic_str}"不存在')
-    elif len(relic_find) > 1:
-        print(f'遗物"{relic_str}"找到{len(relic_find)}个结果')
-    else:
-        return relic_find[0]
-    exit()
-
-
-def get_relic_str(relic_id):
-    global db
-    relic_find = db.db_relics[db.db_relics["name_en"] == relic_id]["name_zhs"].to_list()
-    if len(relic_find) == 0:
-        print(f'遗物"{relic_id}"不存在')
-    elif len(relic_find) > 1:
-        print(f'遗物"{relic_id}"找到{len(relic_find)}个结果')
-    else:
-        return relic_find[0]
-    exit()
-
-
-"""SAVE FUNCTIONS"""
-
-
-def job_choose(job: int):
-    """
-    Args:
-        job: int between 1 to 4
-    """
-    global save
-    save.init_job(db.get_job_from_num(job - 1))
-    print(f"加载存档成功")
-
-
-def show_save():
-    global save
-    save.show()
-    return
-
-
-def write_json():
-    global save
-    save.write_to_json_file()
-    return
-
-
-def add_card(card_id, upgrades):
-    global save
-    save.add_card_to_json(card_id, upgrades)
-    print(f'添加卡牌"id={card_id}, upgrades={upgrades}"成功')
-    return
-
-
-def upgrades_card(card_id, upgrades):
-    global save
-    save.upgrades_card_to_json(card_id, upgrades)
-    print(f'升级卡牌"id={card_id}, upgrades={upgrades}"成功')
-    return
-
-
-def remove_card(card_id, upgrades):
-    global save
-    save.remove_card_to_json(card_id, upgrades)
-    print(f'删除卡牌"id={card_id}, upgrades={upgrades}"成功')
-    return
-
-
-def add_relic(relic_id):
-    global save
-    save.add_relic_to_json(relic_id)
-    print(f'添加遗物"id={relic_id},"成功')
-    return
-
-
-def remove_relic(relic_id):
-    global save
-    save.remove_relic_to_json(relic_id)
-    print(f'删除遗物"id={relic_id},"成功')
-    return
-
-
-def update_gold(gold):
-    global save
-    old = save.update_gold_to_json(gold)
-    print(f"将金币从{old}更改为{gold}成功")
-    return
-
-
-def save_save():
-    global save
-    save.save_to_autosave()
-    print(f'保存存档成功，旧存档备份为".back"后缀')
-    return
 
 
 def init(dir):

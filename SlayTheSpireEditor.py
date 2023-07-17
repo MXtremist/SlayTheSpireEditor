@@ -21,9 +21,9 @@ def show_db():
         clear()
         choice = input(input_options(options))
         if choice == "1":
-            utils.show_db_cards()
+            utils.db.show_db_cards()
         elif choice == "2":
-            utils.show_db_relics()
+            utils.db.show_db_relics()
         else:
             break
 
@@ -35,64 +35,53 @@ def edit_save():
     choice = input(input_options(options))
     match choice:
         case "1" | "2" | "3" | "4":
-            utils.job_choose(int(choice))
+            utils.save.init_autosave(utils.db.get_job_from_num(int(choice) - 1))
+            # utils.job_choose(int(choice))
         case _:
             return
     # choose func
-    options = ["展示存档状态", "解码存档到json", "添加卡牌", "升级卡牌", "删除卡牌", "添加遗物", "删除遗物", "修改金币", "保存修改"]
+    options = {
+        "展示存档状态": utils.save.show_autosave,
+        "解码存档到json": utils.save.write_autosave,
+        "添加卡牌": lambda: utils.save.add_card(*card_to_id()),
+        "升级卡牌": lambda: utils.save.upgrades_card(*card_to_id()),
+        "删除卡牌": lambda: utils.save.remove_card(*card_to_id()),
+        "添加遗物": lambda: utils.save.add_relic(*relic_to_id()),
+        "删除遗物": lambda: utils.save.remove_relic(*relic_to_id()),
+        "修改金币": update_gold,
+        "保存修改": utils.save.save_autosave,
+    }
     while True:
         choice = input(input_options(options))
-        match choice:
-            case "1":
-                clear()
-                utils.show_save()
-            case "2":
-                utils.write_json()
-            case "3":
-                card_id, upgrades = card_to_id()
-                utils.add_card(card_id, upgrades)
-            case "4":
-                card_id, upgrades = card_to_id()
-                utils.upgrades_card(card_id, upgrades)
-            case "5":
-                card_id, upgrades = card_to_id()
-                utils.remove_card(card_id, upgrades)
-            case "6":
-                utils.add_relic(relic_to_id())
-            case "7":
-                utils.remove_relic(relic_to_id())
-            case "8":
-                update_gold()
-            case "9":
-                utils.save_save()
-            case _:
-                break
-        input("任意输入继续")
+        if choice.isdigit() and 1 <= int(choice) <= len(options):
+            clear()
+            list(options.values())[int(choice) - 1]()
+        else:
+            break
     if not utils.save.save_state:
         choice = input("存档尚未保存，输入回车保存更改，其他输入取消更改")
         if choice == "":
-            utils.save_save()
+            utils.save.save_autosave()
 
 
 def card_to_id():
-    clear()
     card = input("========================\n请输入卡牌中文名称:")
     upgrades_str = input("请输入卡牌等级，默认及任何非法输入视为0:")
     upgrades = 0
     if upgrades_str.isdigit():
         upgrades = int(upgrades_str)
-    return utils.get_card_id(card), upgrades
+    return card, utils.db.get_card_id(card), upgrades
+
 
 def relic_to_id():
-    clear()
     relic = input("========================\n请输入遗物中文名称:")
-    return utils.get_relic_id(relic)
+    return relic, utils.db.get_relic_id(relic)
+
 
 def update_gold():
-    clear()
     gold = input("========================\n请输入金币数:")
     if gold.isdigit():
-        utils.update_gold(int(gold))
+        utils.save.update_gold(int(gold))
     else:
         print(f"{gold}不是合法数字")
 
