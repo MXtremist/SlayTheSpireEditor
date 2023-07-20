@@ -3,7 +3,7 @@ import pandas as pd
 
 
 def readcards_from_tabx():
-    tabx = "Data-Card_data.tabx"
+    tabx = "Data-Card_data.tabx"  # https://sts.huijiwiki.com/wiki/Data:Card_data.tabx
     output = "db_cards.csv"
     df = pd.DataFrame(
         columns=[
@@ -55,7 +55,7 @@ def readcards_from_tabx():
 
 
 def readrelics_from_tabx():
-    tabx = "Data-Relics.tabx"
+    tabx = "Data-Relics.tabx"  # https://sts.huijiwiki.com/wiki/Data:Relics.tabx
     output = "db_relics.csv"
 
     df = pd.DataFrame(
