@@ -12,7 +12,7 @@ name,card_id,name_en,color,type,rarity,cost,description,upgrade_cost,upgrade_des
 愤怒,Anger,Anger,红色,攻击,普通,0,造成6点伤害。<br>在弃牌堆放入一张此牌的复制品。,0,造成8点伤害。<br>在弃牌堆放入一张此牌的复制品。
 武装,Armaments,Armaments,红色,技能,普通,1,获得5点{{KW|格挡}}。<br>在本场战斗中{{KW|升级}}手牌中的一张牌。,1,获得5点{{KW|格挡}}。<br>在本场战斗中{{KW|升级}}手牌中的所有牌。
 神化,Apotheosis,Apotheosis,无色,技能,稀有,2,在本场战斗中 升级 你的所有牌。<br>{{KW|消耗}}。,1,本场战斗中升级你的所有牌。<br>{{KW|消耗}}。
-进阶之灾,Ascenders Bane,Ascenders Bane,诅咒,诅咒,特殊,-2,{{KW|不能被打出}}。<br>{{KW|虚无}}。<br>不能从牌组中移除。,0,
+进阶之灾,AscendersBane,Ascenders Bane,诅咒,诅咒,特殊,-2,{{KW|不能被打出}}。<br>{{KW|虚无}}。<br>不能从牌组中移除。,0,
 后空翻,Backflip,Backflip,绿色,技能,普通,1,获得5点{{KW|格挡}}。<br>抽2张牌。,1,获得8点{{KW|格挡}}。<br>抽2张牌。
 背刺,Backstab,Backstab,绿色,攻击,罕见,0,造成11点伤害。<br>{{KW|固有}}。<br>{{KW|消耗}}。,0,造成15点伤害。<br>{{KW|固有}}。<br>{{KW|消耗}}。
 自动护盾,Auto Shields,Auto Shields,蓝色,技能,罕见,1,如果你没有格挡，获得 11 点{{KW|格挡}}。,1,如果你没有格挡，获得15点{{KW|格挡}}。

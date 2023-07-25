@@ -43,9 +43,9 @@ def edit_save():
     options = {
         "展示存档状态": utils.save.show_autosave,
         "解码存档到json": utils.save.write_autosave,
-        "添加卡牌": lambda: utils.save.add_card(*card_to_id()),
-        "升级卡牌": lambda: utils.save.upgrades_card(*card_to_id()),
-        "删除卡牌": lambda: utils.save.remove_card(*card_to_id()),
+        "添加卡牌": lambda: utils.save.add_card(*card_to_id3()),
+        "升级卡牌": lambda: utils.save.upgrades_card(*card_to_id4()),
+        "删除卡牌": lambda: utils.save.remove_card(*card_to_id3()),
         "添加遗物": lambda: utils.save.add_relic(*relic_to_id()),
         "删除遗物": lambda: utils.save.remove_relic(*relic_to_id()),
         "修改金币": update_gold,
@@ -64,13 +64,36 @@ def edit_save():
             utils.save.save_autosave()
 
 
-def card_to_id():
-    card = input("========================\n请输入卡牌中文名称:")
-    upgrades_str = input("请输入卡牌等级，默认及任何非法输入视为0:")
+def card_to_id3():
+    infos = input("========================\n请输入卡牌中文名称、当前等级(0)、数量(1)，用空格隔开:").split()
+    card = infos[0]
     upgrades = 0
-    if upgrades_str.isdigit():
-        upgrades = int(upgrades_str)
-    return card, utils.db.get_card_id(card), upgrades
+    cnt = 1
+    if len(infos) >= 2:
+        if infos[1].isdigit():
+            upgrades = int(infos[1])
+        if len(infos) >= 3:
+            if infos[2].isdigit():
+                cnt = int(infos[2])
+    return card, utils.db.get_card_id(card), upgrades, cnt
+
+
+def card_to_id4():
+    infos = input("========================\n请输入卡牌中文名称、当前等级(0)、数量(1)、所需等级(1)，用空格隔开:").split()
+    card = infos[0]
+    upgrades = 0
+    cnt = 1
+    need = 1
+    if len(infos) >= 2:
+        if infos[1].isdigit():
+            upgrades = int(infos[1])
+        if len(infos) >= 3:
+            if infos[2].isdigit():
+                cnt = int(infos[2])
+            if len(infos) >= 4:
+                if infos[3].isdigit():
+                    need = int(infos[3])
+    return card, utils.db.get_card_id(card), upgrades, cnt, need
 
 
 def relic_to_id():

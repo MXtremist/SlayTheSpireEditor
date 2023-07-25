@@ -179,30 +179,35 @@ class autosave(object):
                 return i
         return -1
 
-    def add_card(self, card_str, card_id, upgrades):
-        self.save_json["cards"].append({"upgrades": upgrades, "misc": 0, "id": card_id})
+    def add_card(self, card_str, card_id, upgrades, cnt):
+        for i in range(cnt):
+            self.save_json["cards"].append({"upgrades": upgrades, "misc": 0, "id": card_id})
         self.save_state = False
-        print(f'添加卡牌"name={card_str}, id={card_id}, upgrades={upgrades}"成功')
+        print(f'添加卡牌"name={card_str}, id={card_id}, upgrades={upgrades}"{cnt}张成功')
         return
 
-    def upgrades_card(self, card_str, card_id, upgrades):
-        index = self.find_card(card_id, upgrades)
-        if index == -1:
-            print(f'找不到卡牌"name={card_str}, id={card_id}, upgrades={upgrades}"')
-        else:
-            self.save_json["cards"][index]["upgrades"] += 1
-            self.save_state = False
-            print(f'升级卡牌"name={card_str}, id={card_id}, upgrades={upgrades}"成功')
+    def upgrades_card(self, card_str, card_id, upgrades, cnt, need):
+        for i in range(cnt):
+            index = self.find_card(card_id, upgrades)
+            if index == -1:
+                print(f'找不到卡牌"name={card_str}, id={card_id}, upgrades={upgrades}"。已经升级了{i}张')
+                return
+            else:
+                self.save_json["cards"][index]["upgrades"] = need
+                self.save_state = False
+        print(f'升级卡牌"name={card_str}, id={card_id}, upgrades={upgrades}"{cnt}张为{need}级成功')
         return
 
-    def remove_card(self, card_str, card_id, upgrades):
-        index = self.find_card(card_id, upgrades)
-        if index == -1:
-            print(f'找不到卡牌"name={card_str}, id={card_id}, upgrades={upgrades}"')
-        else:
-            del self.save_json["cards"][index]
-            self.save_state = False
-            print(f'删除卡牌"name={card_str}, id={card_id}, upgrades={upgrades}"成功')
+    def remove_card(self, card_str, card_id, upgrades, cnt):
+        for i in range(cnt):
+            index = self.find_card(card_id, upgrades)
+            if index == -1:
+                print(f'找不到卡牌"name={card_str}, id={card_id}, upgrades={upgrades}"。已经删除了{i}张')
+                return
+            else:
+                del self.save_json["cards"][index]
+                self.save_state = False
+        print(f'删除卡牌"name={card_str}, id={card_id}, upgrades={upgrades}"{cnt}张成功')
         return
 
     '''Relic'''
