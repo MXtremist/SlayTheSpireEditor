@@ -66,6 +66,8 @@ def edit_save():
 
 def card_to_id3():
     infos = input("========================\n请输入卡牌中文名称、当前等级(0)、数量(1)，用空格隔开:").split()
+    if len(infos) < 1:
+        return card_to_id3()
     card = infos[0]
     upgrades = 0
     cnt = 1
@@ -80,6 +82,8 @@ def card_to_id3():
 
 def card_to_id4():
     infos = input("========================\n请输入卡牌中文名称、当前等级(0)、数量(1)、所需等级(1)，用空格隔开:").split()
+    if len(infos) < 1:
+        return card_to_id4()
     card = infos[0]
     upgrades = 0
     cnt = 1

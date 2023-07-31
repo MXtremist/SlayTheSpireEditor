@@ -7,7 +7,7 @@ from prettytable import PrettyTable
 
 # DEBUG = True
 SAVESDIR = "D:\Steam\steamapps\common\SlayTheSpire\saves"
-DATABASE = "SlayTheSpireData\config.json"
+DATABASE = "Data\config.json"
 
 
 def read_file(filename):
