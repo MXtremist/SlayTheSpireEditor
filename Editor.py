@@ -1,6 +1,6 @@
 # import json
 import os
-import SlayTheSpireUtils as utils
+import Utils as utils
 
 
 def clear():
