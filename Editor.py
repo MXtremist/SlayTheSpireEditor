@@ -49,6 +49,7 @@ def edit_save():
         "添加遗物": lambda: utils.save.add_relic(*relic_to_id()),
         "删除遗物": lambda: utils.save.remove_relic(*relic_to_id()),
         "修改金币": update_gold,
+        "恢复血量": update_health,
         "保存修改": utils.save.save_autosave,
     }
     while True:
@@ -109,6 +110,14 @@ def update_gold():
     gold = input("========================\n请输入金币数:")
     if gold.isdigit():
         utils.save.update_gold(int(gold))
+    else:
+        print(f"{gold}不是合法数字")
+
+
+def update_health():
+    health = input("========================\n请输入恢复到的血量:")
+    if health.isdigit():
+        utils.save.update_health(int(health))
     else:
         print(f"{gold}不是合法数字")
 

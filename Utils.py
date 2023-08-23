@@ -27,6 +27,7 @@ class database(object):
         self.db_json = json.loads(read_file(filename))
         self.db_cards = pd.read_csv(self.db_json["cards"])
         self.db_relics = pd.read_csv(self.db_json["relics"])
+        self.energy_relics = self.db_json["energy_relics"]
 
     def get_job_from_num(self, num: int) -> str:
         return self.db_json["jobs"][num]
@@ -76,6 +77,9 @@ class database(object):
         else:
             return relic_find[0]
         exit()
+
+    def is_energy(self, relic_id):
+        return relic_id in self.energy_relics
 
 
 class autosave(object):
@@ -219,8 +223,9 @@ class autosave(object):
         return -1
 
     def add_relic(self, relic_str, relic_id):
+        global db
         self.save_json["relics"].append(relic_id)
-        if relic_str == "添水":
+        if db.is_energy(relic_id):
             self.save_json["red"] += 1
         self.save_state = False
         print(f'添加遗物"name={relic_str}, id={relic_id}"成功')
@@ -243,6 +248,15 @@ class autosave(object):
         self.save_json["gold"] = gold
         self.save_state = False
         print(f"将金币从{old}更改为{gold}成功")
+        return
+
+    '''Health'''
+
+    def update_health(self, health):
+        old = self.save_json["current_health"]
+        self.save_json["current_health"] = health
+        self.save_state = False
+        print(f"将血量从{old}更改为{health}成功")
         return
 
 

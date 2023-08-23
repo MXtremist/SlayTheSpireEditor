@@ -6,5 +6,16 @@
     "WATCHER"
   ],
   "cards": "Data\\db_cards.csv",
-  "relics": "Data\\db_relics.csv"
+  "relics": "Data\\db_relics.csv",
+  "energy_relics": [
+    "Sozu",
+    "Coffee Dripper",
+    "Busted Crown",
+    "Ectoplasm",
+    "Mark of Pain",
+    "Cursed Key",
+    "Philosopher's Stone",
+    "Fusion Hammer",
+    "Runic Dome"
+  ]
 }
