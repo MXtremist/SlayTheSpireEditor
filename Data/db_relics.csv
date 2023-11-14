@@ -33,7 +33,7 @@ Meal Ticket,餐券,MealTicket,普通,每当你进入商店房间时，回复 #b1
 Maw Bank,巨口储蓄罐,MawBank,普通,每攀爬一层楼层获得 #b12 #y金币 。一旦在商店中花费 #y金币 就会失效。,"Whenever you climb a floor, gain #b12 #yGold. No longer works when you spend any #b12 #yGold at the shop.",尽管巨口袭击频繁发生，这个造型的储蓄罐却意外相当流行。,"Surprisingly popular, despite maw attacks being a regular occurrence.",通用
 Nunchaku,双节棍,Nunchaku,普通,你每打出 #b10张 #y攻击牌 ，获得一点能量。,"Every time you play #b10 #yAttacks, gain 1 energy.",优良的练武器具，能改善使用者的姿势、提升灵活度。,A good training tool. Improves the posture and agility of the wielder.,通用
 Preserved Insect,昆虫标本,PreservedInsect,普通,精英战中的敌人生命减少 #b25% 。,Enemies in Elite combats have #b25% less HP.,这只昆虫似乎会对尤其巨大的敌人们散发出虚弱的光环。,The insect seems to create a shrinking aura that targets particularly large enemies.,通用
-Ceramic Fish,陶瓷小鱼,Ceramic Fish,普通,每次你往自己的牌组中加入一张卡牌时，获得 #b9 #y金币。,"Whenever you add a card to your deck, gain #b9 #ygold.",这些被精心上色的鱼儿被认为可以带来滚滚财源。,"Meticulously painted, these fish were revered to bring great fortune.",通用
+Ceramic Fish,陶瓷小鱼,CeramicFish,普通,每次你往自己的牌组中加入一张卡牌时，获得 #b9 #y金币。,"Whenever you add a card to your deck, gain #b9 #ygold.",这些被精心上色的鱼儿被认为可以带来滚滚财源。,"Meticulously painted, these fish were revered to bring great fortune.",通用
 Akabeko,赤牛,Akabeko,普通,你在每场战斗中的第一次攻击造成 #b8 点额外伤害,Your first Attack each combat deals #b8 additional damage.,哞～,"""Muuu~""",通用
 Damaru,手摇鼓,Damaru,普通,在你的回合开始时，获得 #b1 层 #y真言 。,"At the start of your turn, gain #b1 #yMantra.",这面小鼓的声音让你时刻保持神志清醒，仿佛能看见前方何处才有道路。,"The sound of the small drum keeps your mind awake, revealing a path forward.",观者
 Pen Nib,钢笔尖,Pen Nib,普通,你每打出的第 #b10 张 #y攻击牌 将会造成双倍伤害。,Every #b10th #yAttack you play deals double damage.,拿着这支笔尖时，你可以看见所有被笔尖前主人杀死过的人。真是血腥的历史。,"Holding the nib, you can see everyone ever slain by a previous owner of the pen. A violent history.",通用
